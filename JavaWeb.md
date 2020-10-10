@@ -1181,9 +1181,140 @@ public static final int SC_HTTP_VERSION_NOT_SUPPORTED = 505;
 
 ### 6.7 HTTPResponse
 
+HTTP ServletRequest代表客户端的请求，用户通过Http协议访问率服务器，Http请求中的所有
+
+![image-20201010114552682](JavaWeb.assets/image-20201010114552682.png)
+
+#### 1 获取前端传递参数
+
+![image-20201010114712317](JavaWeb.assets/image-20201010114712317.png)
+
+```java
+@Override
+protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+    req.setCharacterEncoding("utf-8");
+    resp.setCharacterEncoding("utf-8");
+    String username = req.getParameter("username");
+    String password = req.getParameter("password");
+    String[] hobbies = req.getParameterValues("hobbies");
+    System.out.println("====================");
+    System.out.println(username);
+    System.out.println(password);
+    System.out.println(Arrays.toString(hobbies));
+    System.out.println("====================");
+
+    // 通过请求转发
+    // 这里的 / 就是当前的web应用 路径
+    req.getRequestDispatcher("/success.jsp").forward(req,resp);
+
+}
+```
+
+#### 2 请求转发
+
+请求转发和重定向
+
+
+
+## 7 Cookie Session
+
+饼干，会话
+
+### 7.1 会话
+
+**会话**：用户打开一个浏览器，点击了很多超链接，访问多个web资源，关闭浏览器，这个过程可以称之为会话。
+
+**有状态会话**：一个同学来过教室，下次再来教室，我们会知道这个同学，曾经来过，称之为有状态会话。
+
+你能怎么证明你是西开的学生？
+
+你        西开
+
+1. 发票   				西开给你的发票 
+2. 学校的登记        西开标记你来过了
+
+**一个网站，怎么证明你来过？**
+
+客户端		服务端
+
+1. 服务端给客户端一个信件，客户端下次访问服务端直接带上信件就可以了；	cookie
+2. 服务器登记你来过了，下次你来的时候我来匹配你    session
+
+
+
+### 7.2 保存会话的两种技术
+
+**cookie**
+
+- 客户端技术（响应，请求）
+
+
+
+**session**
+
+- 服务器技术/行为，利用这个技术，可以保存用户的会话信息，我们可以把信息或者数据放在session中！
+
+
+
+常见场景：网站登录之后你下次不用再登陆！
 
 
 
 
 
+### 7.3 Cookie
+
+1. 从请求中拿到cookie信息
+2. 服务器响应给客户端cookie
+
+```java
+// Cookie服务器端从客户端获取
+Cookie[] cookies = req.getCookies(); // 这里返回数组，说明cookie可能存在多个
+
+cookie.getName();
+cookie.getValue();
+new Cookie("lastLoginTime", System.currentTimeMillis() + "");
+cookie.setMaxAge(24*60*60);
+resp.addCookie(cookie);
+
+```
+
+**cookie:一般会保存在本地的用户目录下 appdata；**
+
+
+
+一个网站的cookie是否存在上限！聊聊细节问题
+
+- 一个Cookie只能保存一个信息；
+- 一个web站点可以给浏览器发送多个cookie，最多放20个
+- Cookie大小限制4kb
+- 300个cookie浏览器上限
+
+
+
+删除cookie：
+
+- 不设置有效期，关闭浏览器自动失效；
+- 设置有效期时间为0；
+
+
+
+编码解码 URLEncoder URLDecoder
+
+
+
+### 7.4 Session【重点】
+
+什么是session：
+
+- 服务器会给每一个用户（浏览器）创建一个session对象
+- 一个Session独占一个浏览器，只要浏览器没关，这个session就一直存在
+- 用户登录之后，整个网站他都可以访问--》保存用户的信息，保存购物车的信息
+
+
+
+Session和Cookie的区别：
+
+- 
 
