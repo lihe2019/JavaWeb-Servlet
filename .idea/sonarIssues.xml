@@ -28,6 +28,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/session-cookie/src/main/java/com/lihe/pojo/Person.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/session-cookie/src/main/java/com/lihe/servlet/Cookie.java">
           <value>
             <set />
@@ -48,7 +53,27 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/session-cookie/src/main/java/com/lihe/servlet/SessionDemo01.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/session-cookie/src/main/java/com/lihe/servlet/SessionDemo02.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/session-cookie/src/main/java/com/lihe/servlet/SessionDemo03.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/session-cookie/src/main/webapp/WEB-INF/web.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/session-cookie/src/main/webapp/hello.jsp">
           <value>
             <set />
           </value>

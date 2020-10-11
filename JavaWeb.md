@@ -1316,5 +1316,172 @@ resp.addCookie(cookie);
 
 Session和Cookie的区别：
 
-- 
+- Cookie是把用户的数据写给用户的浏览器，浏览器保存
+- Session是把用户的数据写到用户独占的Session中，服务器保存（保存重要的信息，减少服务器资源的浪费）
+- Session对象由服务创建
 
+
+
+![image-20201011155624241](JavaWeb.assets/image-20201011155624241.png)
+
+之前Servlet之前共享数据用Context，东西一多服务器就炸了，现在可以用Session了
+
+
+
+**使用场景：**
+
+- 保存一个登录用户的信息
+- 购物车信息
+- 在整个网站中，经常会会使用的数据，我们将他保存在session中
+
+
+
+使用Session
+
+```java
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        // 解决乱码问题
+        req.setCharacterEncoding("utf-8");
+        resp.setCharacterEncoding("utf-8");
+        resp.setContentType("text/html");
+
+        // 得到Session
+        HttpSession session = req.getSession();
+
+
+        // 给Session中存东西
+        session.setAttribute("name",new Person("李赫", 24));
+
+        // 获取Session的id
+
+        String id = session.getId();
+
+        // 判断是不是新创建的
+        boolean aNew = session.isNew();
+        if (aNew){
+            resp.getWriter().write("Session创建成功， id ： " + id);
+        }else{
+            resp.getWriter().write("session之前已经创建了");
+        }
+
+        // session在创建的是偶做了什么
+//
+//        Cookie cookie = new Cookie("JSESSIONID", id);
+//        resp.addCookie(cookie);
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
+```
+
+
+
+**会话自动过期：web.xml中配置**
+
+```xml
+<!--    设置session默认的失效时间-->
+<session-config>
+<!--        15分钟后session自动失效，分钟为单位-->
+    <session-timeout>15</session-timeout>
+</session-config>
+```
+
+![image-20201011165709709](JavaWeb.assets/image-20201011165709709.png)
+
+
+
+## 8 JSP
+
+### 8.1 什么是JSP
+
+Java Server Pages：Java服务器端页面，也和Servlet一样，用于动态web技术
+
+最大的特点：
+
+- 写JSP就像在写html
+- 区别：
+  - HTML只给用户提供动态数据，js也是伪动态，不和服务器交互
+  - JSP页面中可以嵌入JAVA代码，为用户提供动态数据
+
+### 8.2 JSP原理
+
+思路：JSP到底怎么执行的！
+
+- 代码层面没有任何问题
+- 服务器内部工作
+  - tomcat中有一个work目录
+  - IDEA中使用Tomcat 会在idea的tomcat中生成一个work目录
+
+```shell
+C:\Users\SuperMan\AppData\Local\JetBrains\IntelliJIdea2020.2\tomcat\Unnamed_JavaWeb-Servlet\work\Catalina\localhost\session\org\apache\jsp
+```
+
+
+
+![image-20201011171547945](JavaWeb.assets/image-20201011171547945.png)
+
+发现页面转变成了java程序
+
+
+
+**浏览器向服务器发送请求，不管访问什么资源，其实都是在访问servlet！**
+
+JSP最终也会转变成一个Java类
+
+JSP本质上就是一个Servlet
+
+
+
+```java
+// 初始化
+public void _jspInit() {
+}
+
+// 销毁
+public void _jspDestroy() {
+}
+
+// JSP的Service
+public void _jspService(final HttpServletRequest request, final HttpServletResponse response)
+  throws java.io.IOException, javax.servlet.ServletException {}
+```
+
+1. 判断请求
+
+2. 内置一些对象
+
+   ```java
+   final javax.servlet.jsp.PageContext pageContext; // 页面上下文
+   javax.servlet.http.HttpSession session = null;	// session
+   final javax.servlet.ServletContext application;	// applicationContext
+   final javax.servlet.ServletConfig config;		// config
+   javax.servlet.jsp.JspWriter out = null;			// out
+   final java.lang.Object page = this;				// page：页面
+   javax.servlet.jsp.JspWriter _jspx_out = null;	
+   javax.servlet.jsp.PageContext _jspx_page_context = null;
+   HttpServletRequest request						// 请求
+   HttpServletResponse response					// 响应
+   ```
+
+3. 输出页面前增加的代码
+
+   ```java
+   response.setContentType("text/html");			// 设置响应的页面类型
+   pageContext = _jspxFactory.getPageContext(this, request, response,
+           null, true, 8192, true);
+   _jspx_page_context = pageContext;
+   application = pageContext.getServletContext();
+   config = pageContext.getServletConfig();
+   session = pageContext.getSession();
+   out = pageContext.getOut();
+   _jspx_out = out;
+   ```
+
+4. 以上的这些对象我们可以在JSP页面中直接使用！
+
+![image-20201011182715184](JavaWeb.assets/image-20201011182715184.png)
