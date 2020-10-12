@@ -1485,3 +1485,263 @@ public void _jspService(final HttpServletRequest request, final HttpServletRespo
 4. 以上的这些对象我们可以在JSP页面中直接使用！
 
 ![image-20201011182715184](JavaWeb.assets/image-20201011182715184.png)
+
+在JSP页面中，只要是java代码，就会原封不动输出，如果是html代码，就会被转成
+
+```java
+out.write("<html>"\n)
+```
+
+这样的格式，输出到前端。
+
+### 8.3 JSP基础语法
+
+任何语言都有自己的语法，JAVA中有，JSP作为Java技术中的一种应用，他有自己扩充的语法，（了解，知道即可！以后用的不多），Java的语法他都支持
+
+**JSP表达式**
+
+```jsp
+<%--  JSP表达式
+ 用来将程序的输出输出到客户端
+   <%= 变量或表达式%>
+ --%>
+<%= new java.util.Date()%>
+```
+
+**JSP脚本片段**
+
+```jsp
+ <%--  JSP脚本片段--%>
+ <%
+   int sum = 0;
+   for (int i = 1; i < 100; i++) {
+     sum += i;
+   }
+   out.println("<h1>Sum = " + sum + "</h1>");
+ %>
+```
+
+**脚本片段再实现**
+
+```jsp
+<%--  在代码中嵌入html元素--%>
+  <%
+    for (int i = 0; i < 5; i++) {
+  %>
+  <h1>Hello world <%= i%> </h1>
+  <%
+    }
+  %>
+```
+
+**JSP声明**
+
+```jsp
+<%!
+  static {
+    System.out.println("Loading Servlet!");
+  }
+  private int globalVar = 0;
+  public void lihe(){
+    System.out.println("进入了方法lihe");
+  }
+%>
+```
+
+JSP声明：会被编译到JSP生成的Java的类中！其他的，就会被生成到 jspService方法中！
+
+
+
+在JSP中，嵌入Java代码即可
+
+```jsp
+<%%>
+<%=%>
+<%!%>
+<%----%>
+```
+
+JSP的注释不会在客户端展示
+
+### 8.4 JSP指令
+
+```jsp
+<%@page .... %>
+<%@include file=""%>
+
+
+<%-- @include 会将两个页面合二为一 --%>
+<%@include file="common/header.jsp"%>
+<h1>网页主体</h1>
+<%@include file="common/footer.jsp"%>
+
+<hr>
+
+<%-- jsp 标签体  拼接页面，本质上还是多个页面 但是要注意作用域 比如变量作用域--%>
+<jsp:include page="/common/header.jsp"/>
+<jsp:include page="/common/footer.jsp"/>
+
+```
+
+
+
+==跳过了p20 21==
+
+
+
+## 9 JavaBean
+
+实体类（咖啡豆？？？）
+
+JavaBean有特殊写法：
+
+- 必须要有一个无参构造
+- 属性必须私有化
+- 必须有对应的get、set方法
+
+符合这些的就是JavaBean，一般用来和数据库的字段做映射 ORM；
+
+ORM 对象关系映射
+
+- 表---->类
+- 字段---->属性
+- 行记录---->对象
+
+| i    | name  | age  | address |
+| ---- | ----- | ---- | ------- |
+| 1    | lihe1 | 3    | 唐山    |
+| 2    | lihe2 | 18   | 沈阳    |
+| 3    | lihe3 | 24   | 深圳    |
+
+```java
+class Person{
+    private int 1;
+    private String name;
+    private int age;
+    private String address;
+}
+
+class A{
+    new Person(1, "lihe1", 3, "唐山");
+}
+```
+
+
+
+两种写法都行，喜欢哪个写哪个
+
+```jsp
+<%
+//    Person person =new Person();
+//    person.setAddress("唐山");
+//    person.setAddress("");
+//    person.setAddress("");
+//    person.setAddress("");
+%>
+<%-- 和上面一样的效果 --%>
+<jsp:useBean id="person" class="con.lihe.pojo.Person" scope="page"/>
+
+
+<%--<%=person.getAddress();%>--%>
+
+<jsp:setProperty name="person" property="address" value="唐山"/>
+<jsp:setProperty name="person" property="id" value="1"/>
+<jsp:setProperty name="person" property="name" value="lihe1"/>
+<jsp:setProperty name="person" property="age" value="3"/>
+姓名：<jsp:getProperty name="person" property="name"/>
+```
+
+
+
+## 10 MVC三层架构
+
+什么是MVC：Model	View	Controller	
+
+模型（实体类和数据库中的字段）	视图（jsp页面）	控制器（Servlet）
+
+### 10.1 早些年的架构
+
+![image-20201012204904528](JavaWeb.assets/image-20201012204904528.png)
+
+用户直接访问控制层，控制层直接操作数据库
+
+servlet-----CRUD---》数据库
+
+弊端：程序十分臃肿，不利于维护	servlet的代码中：本来就要写处理请求、响应、视图跳转。还要处理JDBC、处理业务代码、处理逻辑代码
+
+
+
+架构：没有什么是加一层解决不了的！如果不行，再加一层
+
+程序员调用
+
+  |
+
+JDBC
+
+  |
+
+MySQL	Oracle Sqlserver......
+
+
+
+MVC架构
+
+![image-20201012210037114](JavaWeb.assets/image-20201012210037114.png)
+
+
+
+Model：
+
+- 业务处理：业务逻辑（Service层）
+- 数据持久层：CRUD（DAO层）
+
+View：
+
+- 展示数据
+- 提供链接发起Servlet请求（a, form, img...）
+
+Controller（Servlet）
+
+- 接收用户的请求：（req：请求参数，session信息.....）
+
+- 交给业务层处理对应的代码
+
+- 控制视图的跳转
+
+  ```java
+  登录--->接收用户的登录请求---->处理用户的请求（获取用户登录的参数。username，password）---->交给业务层处理登录业务（判断用户名密码是否正确：事务（并不是没啥卵用的一层，有时候也要写一些逻辑））---->DAO层查询用户名和密码是否正确---->数据库
+  ```
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
